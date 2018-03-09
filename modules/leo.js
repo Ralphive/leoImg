@@ -31,7 +31,7 @@ function UpdateVectorsBase(){
     console.log ('Updating Item Image Vectors Database')
     
     var zipFile = uuid.v4()+'.zip';
-    var zipPath = path.join(process.env.IMAGE_DIR,zipFile);
+    var zipPath = path.join(process.env.IMAGE_DIR,"db",zipFile);
 
     // create a file to stream archive data to. 
     var output = fs.createWriteStream(zipPath);
@@ -140,13 +140,13 @@ function GetSimilarItems(req, callback){
                         if (!err){
                             var resp = similars;
 
-                            for (var i = 0; i < resp.similarityScoring.length; i++){                            
-                                if (resp.similarityScoring[i].id == base){
-                                    resp.similarityScoring = resp.similarityScoring[i].similarVectors
-                                    for (var j =0; j < resp.similarityScoring.length; j++){
-                                        var fileName = resp.similarityScoring[j].id
+                            for (var i = 0; i < resp.predictions.length; i++){                            
+                                if (resp.predictions[i].id == base){
+                                    resp.predictions = resp.predictions[i].similarVectors
+                                    for (var j =0; j < resp.predictions.length; j++){
+                                        var fileName = resp.predictions[j].id
                                         fileName = fileName.substr(0, fileName.indexOf('.'))+'.jpg'
-                                        resp.similarityScoring[j].id = fileName 
+                                        resp.predictions[j].id = fileName 
                                     }
 
                                     callback(resp);                                    

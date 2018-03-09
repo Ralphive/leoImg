@@ -18,12 +18,10 @@ app.use("/imgs", express.static(process.env.IMAGE_DIR));
 // Updates SAP Leonardo Vectors DB
 leo.UpdateVectorsBase();
 
-
 // Root path to retrieve Index.html
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'views/index.html'));
 });
-
 
 // Get specific Image
 app.get(path.join(process.env.IMAGE_DIR,':img'), function (req, res) {
@@ -37,11 +35,10 @@ app.post('/SimilarItems', function(req, res){
     leo.GetSimilarItems(req, function(body){
         res.send(body);    
     });
-
+    
     console.log('GetSimilarItems')
     
 });
-
 
 var port = process.env.PORT || 30000
 app.listen(port, function () {
