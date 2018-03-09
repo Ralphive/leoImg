@@ -1,15 +1,15 @@
 {
-  "name": "b1leo",
+  "name": "leoimg",
   "version": "1.0.0",
   "description": " B1 Integration with SAP Leonardo Ticketing API ",
   "main": "app.js",
   "scripts": {
-    "test": "node app.js"
-    "start":"node app.js"
+    "test": "node app.js",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ralphive/b1leo.git"
+    "url": "git+https://github.com/Ralphive/leoimg.git"
   },
   "keywords": [
     "ml",
@@ -25,12 +25,17 @@
   "author": "Ralph Oliveira - @Ralphive",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Ralphive/b1leo/issues"
+    "url": "https://github.com/Ralphive/leoimg/issues"
   },
-  "homepage": "https://github.com/Ralphive/b1leo#readme",
+  "homepage": "https://github.com/Ralphive/leoimg#readme",
   "dependencies": {
+    "archiver": "^2.1.1",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "request": "^2.83.0"
+    "formidable": "^1.2.0",
+    "node-uuid": "^1.4.8",
+    "path": "^0.12.7",
+    "request": "^2.83.0",
+    "uuid": "^3.2.1"
   }
 }

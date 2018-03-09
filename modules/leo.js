@@ -31,33 +31,32 @@ function UpdateVectorsBase(){
     console.log ('Updating Item Image Vectors Database')
     
     var zipFile = uuid.v4()+'.zip';
+    var zipPath = path.join(process.env.IMAGE_DIR,zipFile);
 
     // create a file to stream archive data to. 
-    var output = fs.createWriteStream(process.env.IMAGE_DIR + zipFile);
+    var output = fs.createWriteStream(zipPath);
     var archive = archiver('zip', {zlib: { level: 9 }}); // Sets the compression level. 
 
     // listen for all archive data to be written 
     output.on('close', function() {
        
-        extractVectors(path.join(process.env.IMAGE_DIR,zipFile), function (vectors){
+        extractVectors(zipPath, function (vectors){
             
             //Creates a New Zip File with the vectors of each image
             vectors = JSON.parse(vectors);
-            if (vectors.feature_vector_list.length <= 0){
+            if (vectors.predictions.length <= 0){
                 console.error('Could not retrieve vectors from Leonardo');
                 console.error(vectors);
                 return;
             }
     
-            output = fs.createWriteStream(path.join(process.env.IMAGE_DIR,zipFile));
-
-            for(var i = 0; i < vectors.feature_vector_list.length; i++ ){  
+            for(var i = 0; i < vectors.predictions.length; i++ ){  
                 //Change file extension 
-                var fileName = vectors.feature_vector_list[i].name
+                var fileName = vectors.predictions[i].name
                 fileName = fileName.substr(0, fileName.indexOf('.'))+'.txt'
                 
                 var newTxt = fs.createWriteStream(path.join(process.env.VECTOR_DIR,fileName));
-                var content = JSON.stringify(vectors.feature_vector_list[i].feature_vector);
+                var content = JSON.stringify(vectors.predictions[i].feature_vector);
                 newTxt.write(content);
                 newTxt.end()
                 console.log('Creating file '+ fileName);
@@ -212,7 +211,7 @@ function getSimilatiryScoring(vectors,callback){
         var options = {
                 url: 'https://sandbox.api.sap.com/ml/similarityscoring/inference_sync',
                 headers: {
-                    'APIKey': process.env.LEO_API_KEY
+                    'APIKey': process.env.LEO_API_KEY,
                     'Accept': 'application/json',
                 },
                 formData :{
@@ -251,8 +250,8 @@ function getSimilatiryScoring(vectors,callback){
     // pipe archive data to the file 
     archive.pipe(output);
     
-    var buff =  Buffer.from(JSON.stringify(vectors.feature_vector_list[0].feature_vector), "utf8");
-    var fileName = vectors.feature_vector_list[0].name
+    var buff =  Buffer.from(JSON.stringify(vectors.predictions[0].feature_vector), "utf8");
+    var fileName = vectors.predictions[0].name
     fileName = fileName.substr(0, fileName.indexOf('.'))+'.txt'
     archive.append(buff,{ name: fileName});
     
