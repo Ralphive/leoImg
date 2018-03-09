@@ -1,2 +1,2 @@
-# leoImg
-SAP Leonardo Img Classification and Comparision app
+# NodeB1
+A initial template to develop Cloud Foundry NodeJs apps that integrates with SAP B1
