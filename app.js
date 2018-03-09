@@ -24,20 +24,38 @@ app.get('/', function (req, res) {
 });
 
 // Get specific Image
-app.get(path.join(process.env.IMAGE_DIR,':img'), function (req, res) {
+app.get(path.join(process.env.IMAGE_DIR, ':img'), function (req, res) {
     res.sendFile(filepath);
 });
 
 // SAP Leonardo Services // 
 // Get Similar Item
-app.post('/SimilarItems', function(req, res){                
-    
-    leo.GetSimilarItems(req, function(body){
-        res.send(body);    
+app.post('/Similar', function (req, res) {
+
+    leo.GetSimilarItems(req, function (err, resp) {
+        if (err) {
+            res.status(500).send(err)
+        } else {
+            console.dir(resp);
+            res.status(200).send(resp)
+        }
     });
-    
+
     console.log('GetSimilarItems')
-    
+
+});
+
+// Get Similar Item
+app.post('/Categorize', function (req, res) {
+
+    leo.Categorize(req, function (err, resp) {
+        if (err) {
+            res.status(500).send(err)
+        } else {
+            console.dir(resp);
+            res.status(200).send(resp)
+        }
+    });
 });
 
 var port = process.env.PORT || 30000
