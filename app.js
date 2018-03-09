@@ -34,7 +34,7 @@ app.post('/Similar', function (req, res) {
 
     leo.GetSimilarItems(req, function (err, resp) {
         if (err) {
-            res.status(500).send(err)
+            res.status(500).send(resp)
         } else {
             console.dir(resp);
             res.status(200).send(resp)
@@ -50,7 +50,7 @@ app.post('/Categorize', function (req, res) {
 
     leo.Categorize(req, function (err, resp) {
         if (err) {
-            res.status(500).send(err)
+            res.status(500).send(resp)
         } else {
             console.dir(resp);
             res.status(200).send(resp)

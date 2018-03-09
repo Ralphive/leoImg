@@ -20,9 +20,9 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 var path = require('path');
 
-var __dirname = process.env.IMAGE_DIR
+var dbDir = path.join(process.env.IMAGE_DIR, "db");
 
-console.log("Storing images on: " + __dirname);
+console.log("Storing images on: " + dbDir);
 
 function UpdateVectorsBase() {
     /*
@@ -34,7 +34,7 @@ function UpdateVectorsBase() {
     console.log('Updating Item Image Vectors Database')
 
     var zipFile = uuid.v4() + '.zip';
-    var zipPath = path.join(process.env.IMAGE_DIR, "db", zipFile);
+    var zipPath = path.join(dbDir, zipFile);
 
     // create a file to stream archive data to. 
     var output = fs.createWriteStream(zipPath);
@@ -85,11 +85,11 @@ function UpdateVectorsBase() {
     // pipe archive data to the file 
     archive.pipe(output);
 
-    fs.readdirSync(__dirname).forEach(file => {
+    fs.readdirSync(process.env.IMAGE_DIR).forEach(file => {
         // append img files from stream
 
         if (file.indexOf('.png') !== -1 || file.indexOf('.jpg') !== -1 || file.indexOf('.jpeg') !== -1) {
-            var file1 = __dirname + '/' + file;
+            var file1 = path.join(process.env.IMAGE_DIR , file);
             archive.append(fs.createReadStream(file1), { name: file });
             console.log(file);
         }
@@ -116,12 +116,11 @@ function extractVectors(file, callback) {
     }
 
     request.post(options, function (err, res, body) {
-        if (err) {
-            return console.error('extractVectors failed:', err);
-            throw err;
+        if (res.statusCode != 200) {
+            callback(body,res.statusMessage)
         }
         else {
-            return callback(body);
+            callback(body);
 
         }
     });
@@ -165,8 +164,8 @@ function GetSimilarItems(req, callback) {
                 }
                 else {
                     console.error("ERROR Extracting Vectors")
-                    console.error(err)
-                    callback(err);
+                    console.error(err, vector)
+                    callback(err, vector);
                 }
             })
         } else {
@@ -215,7 +214,10 @@ function uploadFile(req, callback) {
         callback(null, err);
     });
 
-    form.on('end', function () {
+    form.on('end', function (a,b,c) {
+        console.dir(a)
+        console.dir(b)
+        console.dir(c)
     });
 
     // parse the incoming request containing the form data
@@ -233,7 +235,7 @@ function getSimilatiryScoring(vectors, callback) {
     var zipFile = uuid.v4() + '.zip';
 
     // create a file to stream archive data to the zip
-    var output = fs.createWriteStream(path.join(process.env.IMAGE_DIR, zipFile));
+    var output = fs.createWriteStream(path.join(dbDir, zipFile));
     var archive = archiver('zip', { zlib: { level: 9 } }); // Sets the compression level. 
 
     // listen for all archive data to be written 
@@ -246,18 +248,18 @@ function getSimilatiryScoring(vectors, callback) {
                 'Accept': 'application/json',
             },
             formData: {
-                files: fs.createReadStream(path.join(process.env.IMAGE_DIR, zipFile)),
+                files: fs.createReadStream(path.join(dbDir, zipFile)),
                 options: "{\"numSimilarVectors\":3}"
             }
         }
 
         request.post(options, function (err, res, body) {
-            if (err) {
-                return console.error('Similarity Scoring failed:', err);
-                throw err;
+            if (res.statusCode != 200) {
+                callback(null,JSON.parse(body),res.statusMessage)
             }
             else {
-                return callback(fileName, JSON.parse(body));
+                callback(fileName, JSON.parse(body),null);
+    
             }
         });
 

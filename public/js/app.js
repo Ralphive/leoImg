@@ -36,7 +36,7 @@ function Process(endpoint, callback) {
             callback(json)
         })
         .fail(function (json) {
-            alert(JSON.stringify(json));
+            console.error(JSON.stringify(json));
         })
         .always(function (json) {
             DisableButtons(false)
@@ -82,7 +82,6 @@ function DisplaySimilars(data) {
             "</tr>");
     }
 }
-
 
 
 function readURL(input) {
