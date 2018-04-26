@@ -1,6 +1,6 @@
 applications:
 - name: leoimg
-  memory: 64m
+  memory: 256m
   instances: 1
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack.git
   env:

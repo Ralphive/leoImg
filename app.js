@@ -1,3 +1,4 @@
+console.log("app starting...");
 /* Load NodeJS Modules */
 var express = require('express');
 var path = require('path');
@@ -40,9 +41,7 @@ app.post('/Similar', function (req, res) {
             res.status(200).send(resp)
         }
     });
-
     console.log('GetSimilarItems')
-
 });
 
 // Get Similar Item
