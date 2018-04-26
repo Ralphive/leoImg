@@ -1,5 +1,6 @@
 # Leoimg - An implementation of some SAP Leonardo Machine Learning APIs
 [![SAP](https://i.imgur.com/HBBBde7.png)](https://cloudplatform.sap.com)
+
 This application implements some of the SAP Leonardo Machine Learning APIs for image processing. 
 
 ### Overview
