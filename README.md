@@ -15,13 +15,17 @@ $ git clone https://github.com/Ralphive/b1leo.git
 ```
 Give a name to your app on the [manifest.yml](manifest.yml)
 
-From the root directory, using the [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html) push your app to the SAP CP Cloud Foundry
-```sh
-$ cf push
+From the root directory, using the [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html) push your app to the SAP CP Cloud Foundry:
 ```
+$ cf push --random-route
+```
+>*--random-route will avoids name colisions with others that deploy this same app on SCP. You can choose your own app name by changing the application names in the [manifest](manifest.yml)*
+
+*It's ok if you get an error at this point*
+
 It also requires a [SAP Leonardo API Key](https://api.sap.com/shell/discover/contentpackage/SAPLeonardoMLFunctionalServices/api/document_feature_extraction_api) which you can retrive **AFTER** login into the API Hub and clicking on GET API KEY.
 ```sh
-$ cf set-env cfdemosummit18 LEO_API_KEY <YOUR API KEY>
+$ cf set-env <yourAppName> LEO_API_KEY <YOUR API KEY>
 ```
 
 Restart your application (so it can read the new environment variables)
