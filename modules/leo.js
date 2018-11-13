@@ -21,6 +21,7 @@ var fs = require('fs');
 var path = require('path');
 
 var dbDir = path.join(process.env.IMAGE_DIR, "db");
+var LeoServer = process.env.LEO_SERVER || "https://sandbox.api.sap.com/ml"
 
 console.log("Storing images on: " + dbDir);
 
@@ -104,8 +105,9 @@ function extractVectors(file, callback) {
 
     // More info on
     // https://help.sap.com/viewer/product/SAP_LEONARDO_MACHINE_LEARNING_FOUNDATION/1.0/en-US
+    var endpoint = process.env.LEO_FEATUREX_ENDPOINT || '/imagefeatureextraction/feature-extraction'
     var options = {
-        url: 'https://sandbox.api.sap.com/ml/featureextraction/inference_sync',
+        url: LeoServer+endpoint,
         headers: {
             'APIKey': process.env.LEO_API_KEY,
             'Accept': 'application/json'
@@ -240,9 +242,9 @@ function getSimilatiryScoring(vectors, callback) {
 
     // listen for all archive data to be written 
     output.on('close', function () {
-
+        var endpoint = process.env.LEO_SIMILARITY_ENDPOINT || 'similarityscoring/similarity-scoring'
         var options = {
-            url: 'https://sandbox.api.sap.com/ml/similarityscoring/inference_sync',
+            url: LeoServer+endpoint,
             headers: {
                 'APIKey': process.env.LEO_API_KEY,
                 'Accept': 'application/json',
@@ -302,8 +304,9 @@ function getSimilatiryScoring(vectors, callback) {
 
 function categorizeImg(file, callback) {
     // More info on
+    var endpoint = process.env.LEO_IMAGE_CLASSIFY || '/imageclassification/classification'
     var options = {
-        url: 'https://sandbox.api.sap.com/ml/imageclassifier/inference_sync',
+        url: LeoServer+endpoint,
         headers: {
             'APIKey': process.env.LEO_API_KEY,
             'Accept': 'application/json'
