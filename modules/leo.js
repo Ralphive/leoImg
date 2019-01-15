@@ -60,7 +60,7 @@ function UpdateVectorsBase() {
                 fileName = fileName.substr(0, fileName.indexOf('.')) + '.txt'
 
                 var newTxt = fs.createWriteStream(path.join(process.env.VECTOR_DIR, fileName));
-                var content = JSON.stringify(vectors.predictions[i].feature_vector);
+                var content = JSON.stringify(vectors.predictions[i].featureVectors);
                 newTxt.write(content);
                 newTxt.end()
                 console.log('Creating file ' + fileName);
@@ -119,11 +119,11 @@ function extractVectors(file, callback) {
 
     request.post(options, function (err, res, body) {
         if (res.statusCode != 200) {
+            console.error("RESPONSE /imagefeatureextraction/feature-extraction " +  res.statusCode + " - " + res.statusMessage)
             callback(body,res.statusMessage)
         }
         else {
             callback(body);
-
         }
     });
 }
@@ -224,7 +224,7 @@ function uploadFile(req, callback) {
 
     // parse the incoming request containing the form data
     form.parse(req, function (err, fields, files) {
-        console.log(files)
+        console.log("uploadFile" + files)
     });
 
 
@@ -242,12 +242,12 @@ function getSimilatiryScoring(vectors, callback) {
 
     // listen for all archive data to be written 
     output.on('close', function () {
-        var endpoint = process.env.LEO_SIMILARITY_ENDPOINT || 'similarityscoring/similarity-scoring'
+        var endpoint = process.env.LEO_SIMILARITY_ENDPOINT || '/similarityscoring/similarity-scoring'
         var options = {
             url: LeoServer+endpoint,
             headers: {
                 'APIKey': process.env.LEO_API_KEY,
-                'Accept': 'application/json',
+                'Accept': 'application/json'
             },
             formData: {
                 files: fs.createReadStream(path.join(dbDir, zipFile)),
@@ -257,9 +257,10 @@ function getSimilatiryScoring(vectors, callback) {
 
         request.post(options, function (err, res, body) {
             if (res.statusCode != 200) {
+                console.error("RESPONSE similarityscoring/similarity-scoring " + res.statusCode + " - " + res.statusMessage)
                 callback(null,JSON.parse(body),res.statusMessage)
             }
-            else {
+            else {                
                 callback(fileName, JSON.parse(body),null);
     
             }
@@ -285,7 +286,7 @@ function getSimilatiryScoring(vectors, callback) {
     // pipe archive data to the file 
     archive.pipe(output);
 
-    var buff = Buffer.from(JSON.stringify(vectors.predictions[0].feature_vector), "utf8");
+    var buff = Buffer.from(JSON.stringify(vectors.predictions[0].featureVectors), "utf8");
     var fileName = vectors.predictions[0].name
     fileName = fileName.substr(0, fileName.indexOf('.')) + '.txt'
     archive.append(buff, { name: fileName });
