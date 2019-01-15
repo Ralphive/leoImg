@@ -20,7 +20,7 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 var path = require('path');
 
-var dbDir = path.join(process.env.IMAGE_DIR, "db");
+var dbDir = path.join(process.env.IMAGE_DIR  || "./files/imgs", "db");
 var LeoServer = process.env.LEO_SERVER || "https://sandbox.api.sap.com/ml"
 
 console.log("Storing images on: " + dbDir);
@@ -59,7 +59,7 @@ function UpdateVectorsBase() {
                 var fileName = vectors.predictions[i].name
                 fileName = fileName.substr(0, fileName.indexOf('.')) + '.txt'
 
-                var newTxt = fs.createWriteStream(path.join(process.env.VECTOR_DIR, fileName));
+                var newTxt = fs.createWriteStream(path.join(process.env.VECTOR_DIR  || "./files/vectors", fileName));
                 var content = JSON.stringify(vectors.predictions[i].featureVectors);
                 newTxt.write(content);
                 newTxt.end()
@@ -86,11 +86,11 @@ function UpdateVectorsBase() {
     // pipe archive data to the file 
     archive.pipe(output);
 
-    fs.readdirSync(process.env.IMAGE_DIR).forEach(file => {
+    fs.readdirSync(process.env.IMAGE_DIR  || "./files/imgs").forEach(file => {
         // append img files from stream
 
         if (file.indexOf('.png') !== -1 || file.indexOf('.jpg') !== -1 || file.indexOf('.jpeg') !== -1) {
-            var file1 = path.join(process.env.IMAGE_DIR , file);
+            var file1 = path.join(process.env.IMAGE_DIR  || "./files/imgs" , file);
             archive.append(fs.createReadStream(file1), { name: file });
             console.log(file);
         }
@@ -201,7 +201,7 @@ function uploadFile(req, callback) {
     // specify that we want to allow the user to upload multiple files in a single request
     form.multiples = false;
     // store all uploads in the /uploads directory
-    form.uploadDir = process.env.UPLOAD_DIR;
+    form.uploadDir = process.env.UPLOAD_DIR  || "./files/uploads";
 
     // File uploaded successfuly. 
     form.on('file', function (field, file) {
@@ -291,10 +291,10 @@ function getSimilatiryScoring(vectors, callback) {
     fileName = fileName.substr(0, fileName.indexOf('.')) + '.txt'
     archive.append(buff, { name: fileName });
 
-    fs.readdirSync(process.env.VECTOR_DIR).forEach(file => {
+    fs.readdirSync(process.env.VECTOR_DIR || "./files/vectors").forEach(file => {
         // append txt vector files from stream to the zip 
         if (file.indexOf('.txt') !== -1) {
-            archive.append(fs.createReadStream(path.join(process.env.VECTOR_DIR, file)), { name: file });
+            archive.append(fs.createReadStream(path.join(process.env.VECTOR_DIR || "./files/vectors", file)), { name: file });
         }
     })
 
@@ -309,7 +309,7 @@ function categorizeImg(file, callback) {
     var options = {
         url: LeoServer+endpoint,
         headers: {
-            'APIKey': process.env.LEO_API_KEY,
+            'APIKey': process.env.LEO_API_KEY ,
             'Accept': 'application/json'
         },
         formData: {

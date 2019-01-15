@@ -14,7 +14,7 @@ var output = {};
 //To Support body on post requests
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use("/imgs", express.static(process.env.IMAGE_DIR));
+app.use("/imgs", express.static(process.env.IMAGE_DIR || "./files.imgs"));
 
 // Updates SAP Leonardo Vectors DB
 leo.UpdateVectorsBase();
@@ -25,7 +25,7 @@ app.get('/', function (req, res) {
 });
 
 // Get specific Image
-app.get(path.join(process.env.IMAGE_DIR, ':img'), function (req, res) {
+app.get(path.join(process.env.IMAGE_DIR || "./files.imgs", ':img'), function (req, res) {
     res.sendFile(filepath);
 });
 
