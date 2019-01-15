@@ -119,7 +119,7 @@ function extractVectors(file, callback) {
 
     request.post(options, function (err, res, body) {
         if (res.statusCode != 200) {
-            console.error("RESPONSE /imagefeatureextraction/feature-extraction " +  res.statusCode + " - " + res.statusMessage)
+            logLeoError(endpoint, res, body)
             callback(body,res.statusMessage)
         }
         else {
@@ -257,7 +257,7 @@ function getSimilatiryScoring(vectors, callback) {
 
         request.post(options, function (err, res, body) {
             if (res.statusCode != 200) {
-                console.error("RESPONSE similarityscoring/similarity-scoring " + res.statusCode + " - " + res.statusMessage)
+                logLeoError(endpoint, res, body)
                 callback(null,JSON.parse(body),res.statusMessage)
             }
             else {                
@@ -319,11 +319,18 @@ function categorizeImg(file, callback) {
 
     request.post(options, function (err, res, body) {
         if (res.statusCode != 200) {
+            logLeoError(endpoint, res, body)
             callback("Error Categorizing Image - " + res.statusCode, JSON.parse(body));
         }
         else {
             callback(null, JSON.parse(body));
         }
     });
+
+}
+
+function logLeoError(endpoint, response, body){
+    console.error("RESPONSE "+ endpoint+ " - " + response.statusCode + " - " + response.statusMessage)
+    console.error("BODY"+ endpoint+ " - "+ body)
 
 }
