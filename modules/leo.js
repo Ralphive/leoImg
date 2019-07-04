@@ -118,7 +118,7 @@ function extractVectors(file, callback) {
     }
 
     request.post(options, function (err, res, body) {
-        if (res.statusCode != 200) {
+        if (err || res.statusCode != 200) {
             logLeoError(endpoint, res, body)
             callback(body,res.statusMessage)
         }
@@ -205,9 +205,16 @@ function uploadFile(req, callback) {
 
     // File uploaded successfuly. 
     form.on('file', function (field, file) {
-        fs.rename(file.path, file.path + '.jpg');
-        //Callback with the route to the file in the server
-        callback(file.path + '.jpg');
+        fs.rename(file.path, file.path + '.jpg', function(err) {
+            if ( err ) { 
+                console.log('ERROR on file name: ' + err); 
+                callback(null, err); 
+            }
+            else {
+                //Callback with the route to the file in the server
+                callback(file.path + '.jpg', null);
+            }
+        });
     });
 
     // log any errors that occur
@@ -224,7 +231,7 @@ function uploadFile(req, callback) {
 
     // parse the incoming request containing the form data
     form.parse(req, function (err, fields, files) {
-        console.log("uploadFile" + files)
+        console.log("uploadFile " + files)
     });
 
 
@@ -251,12 +258,12 @@ function getSimilatiryScoring(vectors, callback) {
             },
             formData: {
                 files: fs.createReadStream(path.join(dbDir, zipFile)),
-                options: "{\"numSimilarVectors\":3}"
+                options: '{"numSimilarVectors":3}'
             }
         }
 
         request.post(options, function (err, res, body) {
-            if (res.statusCode != 200) {
+            if (err || res.statusCode != 200) {
                 logLeoError(endpoint, res, body)
                 callback(null,JSON.parse(body),res.statusMessage)
             }
@@ -331,6 +338,6 @@ function categorizeImg(file, callback) {
 
 function logLeoError(endpoint, response, body){
     console.error("RESPONSE "+ endpoint+ " - " + response.statusCode + " - " + response.statusMessage)
-    console.error("BODY"+ endpoint+ " - "+ body)
+    console.error("BODY "+ endpoint+ " - "+ body)
 
 }
