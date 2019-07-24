@@ -11,7 +11,7 @@ This application implements some of the SAP Leonardo Machine Learning APIs for i
 ### Installation in the Cloud
 Clone this repository
 ```sh
-$ git clone https://github.com/Ralphive/b1leo.git
+$ git clone https://github.com/Ralphive/leoImg.git
 ```
 Give a name to your app on the [manifest.yml](manifest.yml)
 
